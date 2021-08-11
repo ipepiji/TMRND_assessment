@@ -18,6 +18,10 @@ module.exports = {
           deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
         }
       },
+      hour: {
+          type: Sequelize.DataTypes.DOUBLE(24, 2),
+          allowNull: false
+      },
       description: {
         type: Sequelize.DataTypes.STRING(50),
         allowNull: false

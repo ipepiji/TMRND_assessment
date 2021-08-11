@@ -9,8 +9,8 @@ const { validations } = require('../middlewares');
 router.route('/task')
     .get(controller.getTasks);
 
-router.route('/task/:id')
-    .get(controller.getTaskById);
+router.route('/task/query')
+    .get(validations.user.validate('filter_task'), controller.getTaskByDate);
 
 router.route('/subtask')
     .post(validations.user.validate('create_subtask'), controller.createSubtask)

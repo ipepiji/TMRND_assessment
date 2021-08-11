@@ -12,12 +12,15 @@ import {
 
 import { AuthData } from './data/auth';
 import { AuthService } from './api/auth.service';
+import { UserData } from './data/user';
+import { UserService } from './api/user.service';
 import { ApiModule } from './api/api.module';
 
 import { GuardModule } from './guard/guard.module';
 
 const DATA_SERVICES = [
   { provide: AuthData, useClass: AuthService },
+  { provide: UserData, useClass: UserService },
 ];
 
 

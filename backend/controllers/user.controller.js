@@ -26,10 +26,10 @@ module.exports.getTasks = function (req, res, next) {
     });
 }
 
-module.exports.getTaskById = function (req, res, next) {
+module.exports.getTaskByDate = function (req, res, next) {
     Task.findOne({
         where: {
-            id: req.params.id
+            date: req.query.date
         },
         include: [{
             model: Subtask,
@@ -169,6 +169,12 @@ module.exports.updateSubtask = function (req, res, next) {
             }
         })
     ]).then(([user, subtask]) => {
+        if (subtask[0] === 0)
+            return res.status(400).json({
+                status: "error",
+                message: errors.subtaskNotExist
+            });
+
         const { id, req_hour } = user.task[0];
         User.findAll({
             where: {

@@ -2,9 +2,20 @@ const Joi = require('joi');
 
 module.exports.validate = (method) => {
     return function (req, res, next) {
-        let schema;
+        let schema,
+            req_value,
+            req_type;
 
         switch (method) {
+            case "filter_task": {
+                schema = Joi.object().keys({
+                    date: Joi.date().required(),
+                })
+                req_value = req.query;
+                req_type = "query";
+                break;
+            }
+
             case "create_subtask": {
                 schema = Joi.object({
                     date: Joi.date().required(),
@@ -12,6 +23,8 @@ module.exports.validate = (method) => {
                     hour: Joi.number().required(),
                     description: Joi.string().min(4).max(50).required(),
                 })
+                req_value = req.body;
+                req_type = "body";
                 break;
             }
 
@@ -20,6 +33,8 @@ module.exports.validate = (method) => {
                     hour: Joi.number().required(),
                     description: Joi.string().min(4).max(50).required(),
                 })
+                req_value = req.body;
+                req_type = "body";
                 break;
             }
 
@@ -28,14 +43,18 @@ module.exports.validate = (method) => {
             }
         }
 
-        const { error, value } = schema.validate(req.body)
+        const { error, value } = schema.validate(req_value);
 
         if (error) {
             res.status(400);
             return next(error);
         }
 
-        req.body = value;
+        if (req_type === "query")
+            req.query = value;
+        if (req_type === "body")
+            req.body = value;
+
         return next();
     }
 }
