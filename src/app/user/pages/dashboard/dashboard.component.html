@@ -1,0 +1,9 @@
+<div class="row">
+  <div class="col-xxl-5">
+    <ngx-user-dashboard-calendar (dateEvent)="onDateChange($event)"></ngx-user-dashboard-calendar>
+  </div>
+
+  <div class="col-xxl-7">
+    <ngx-user-dashboard-task [date]="selectedDate"></ngx-user-dashboard-task>
+  </div>
+</div>

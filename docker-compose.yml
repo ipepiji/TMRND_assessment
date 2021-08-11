@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+
+  db:
+    container_name: 'db'
+    image: 'mysql'
+    environment: 
+      MYSQL_DATABASE: 'time_sheet_test'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+        - '3306:3306'
+    cap_add:
+      - 'SYS_NICE'
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: '5s'
+      retries: '10'
+    restart: 'unless-stopped'
+
+  backend:
+    build:
+      context: 'backend'
+      dockerfile: 'Dockerfile'
+    container_name: 'backend'
+    ports:
+      - '3000:3000'
+    depends_on: 
+      db:
+        condition: 'service_healthy'
+    restart: 'unless-stopped'
