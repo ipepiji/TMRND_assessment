@@ -118,7 +118,6 @@ module.exports.createSubtask = function (req, res, next) {
             });
         } else {
             const { hour } = user.task[0];
-            console.log(hour + req.body.hour);
             const updated_task = {
                 req_hour: req.body.req_hour,
                 hour: hour + req.body.hour,

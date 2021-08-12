@@ -20,7 +20,7 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
-              "src/favicon.png",
+              "src/favicon.png"
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.css",
@@ -33,18 +33,26 @@
               "src/app/@theme/styles/styles.scss"
             ],
             "scripts": [
-              "node_modules/pace-js/pace.min.js",
+              "node_modules/pace-js/pace.min.js"
             ],
             "allowedCommonJsDependencies": [
               "lodash",
               "zrender/lib/svg/svg",
-              "zrender/lib/vml/vml"
+              "zrender/lib/vml/vml",
+              "rxjs/Subject"
             ],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
             "sourceMap": true,
-            "optimization": false,
+            "optimization": {
+              "scripts": true,
+              "styles": {
+                "minify": true,
+                "inlineCritical": false
+              },
+              "fonts": true
+            },
             "namedChunks": true
           },
           "configurations": {
@@ -55,7 +63,14 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
@@ -97,7 +112,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [
-              "node_modules/pace-js/pace.min.js",
+              "node_modules/pace-js/pace.min.js"
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.css",
@@ -112,7 +127,7 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
-              "src/favicon.png",
+              "src/favicon.png"
             ]
           }
         },
