@@ -204,7 +204,7 @@ module.exports.updateSubtask = function (req, res, next) {
         }).then((user) => {
             const updated_task = {
                 hour: user.task[0].dataValues.total_hours,
-                status: user.task[0].dataValues.total_hours.toFixed(2) >= req_hour ? "COMPLETE" : "PENDING",
+                status: req_hour === 0 ? "ONLEAVE" : user.task[0].dataValues.total_hours.toFixed(2) >= req_hour ? "COMPLETE" : "PENDING",
             };
             Task.update(updated_task, {
                 where: {
@@ -247,7 +247,7 @@ module.exports.deleteSubtask = function (req, res, next) {
 
         const updatedTask = {
             hour: task.hour - task.subtask[0].hour,
-            status: (task.hour - task.subtask[0].hour).toFixed(2) >= task.req_hour ? "COMPLETE" : "PENDING"
+            status: task.req_hour === 0 ? "ONLEAVE" : (task.hour - task.subtask[0].hour).toFixed(2) >= task.req_hour ? "COMPLETE" : "PENDING"
         };
 
         Promise.all([
