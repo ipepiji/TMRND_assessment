@@ -23,9 +23,44 @@ export class CalendarComponent implements OnInit, OnDestroy {
   @Output() dateEvent = new EventEmitter<SelectedDate>();
 
   subs: any;
-  eventSources: Array<Object> = [];
-  currentEvents: EventApi[] = [];
-  calendarOptions: CalendarOptions;
+  eventSources: Array<Object> = new Array;
+  currentEvents: EventApi[] = new Array;
+  calendarOptions: CalendarOptions = {
+    height: '100%',
+    initialView: 'dayGridMonth',
+    weekends: true,
+    selectable: false,
+    editable: true,
+    eventBackgroundColor: 'red',
+    eventBorderColor: 'sea blue',
+    customButtons: {
+      newTodayButton: {
+        text: 'today',
+        click: this.handleNewTodayButton.bind(this)
+      }
+    },
+    headerToolbar: {
+      left: 'title',
+      right: 'newTodayButton prev,next',
+    },
+    eventContent: function (args, createElement) {
+      if (args.event._def.title === "COMPLETE") {
+        const icon = "&nbsp;<i class='fa fa-thumbs-up'></i>";
+        return {
+          html: icon
+        };
+      }
+
+      if (args.event._def.title === "PENDING") {
+        const icon = "&nbsp;<i class='fa fa-thumbs-down'></i>";
+        return {
+          html: icon,
+        };
+      }
+    },
+    eventClick: this.handleEventClick.bind(this),
+    eventsSet: this.handleEvents.bind(this),
+  };
 
   constructor(private userService: UserData,
     private commonService: CommonService) { }
@@ -44,6 +79,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   loadEvents(): void {
+    this.eventSources = new Array;
     this.subs = this.userService.getTasks().pipe(
       switchMap((res: any) => {
         res.data.forEach(evt => {
@@ -87,43 +123,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
             },
           });
 
-        this.calendarOptions = {
-          height: '100%',
-          initialView: 'dayGridMonth',
-          weekends: true,
-          selectable: false,
-          editable: true,
-          eventBackgroundColor: 'red',
-          eventBorderColor: 'sea blue',
-          customButtons: {
-            newTodayButton: {
-              text: 'today',
-              click: this.handleNewTodayButton.bind(this)
-            }
-          },
-          headerToolbar: {
-            left: 'title',
-            right: 'newTodayButton prev,next',
-          },
-          eventSources: [this.eventSources],
-          eventContent: function (args, createElement) {
-            if (args.event._def.title === "COMPLETE") {
-              const icon = "&nbsp;<i class='fa fa-thumbs-up'></i>";
-              return {
-                html: icon
-              };
-            }
-
-            if (args.event._def.title === "PENDING") {
-              const icon = "&nbsp;<i class='fa fa-thumbs-down'></i>";
-              return {
-                html: icon,
-              };
-            }
-          },
-          eventClick: this.handleEventClick.bind(this),
-          eventsSet: this.handleEvents.bind(this),
-        };
+        this.calendarOptions.eventSources = [this.eventSources];
       },
       error: (err: any) => {
         console.error("this.service.getTasks()", err);
@@ -155,7 +155,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   updateEvent() {
-    this.eventSources = [];
     this.loadEvents();
     let calendarApi = this.calendarComponent.getApi();
     calendarApi.render()

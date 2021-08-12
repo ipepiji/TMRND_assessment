@@ -102,7 +102,7 @@ export class TaskComponent implements OnInit, OnChanges {
       },
     }).onClose.subscribe(task => {
       if (task) {
-        if (this.task.hour + Number(task.get('hour')) <= 24) {
+        if (Number(this.task?.hour || 0) + Number(task.get('hour')) <= 24) {
           const formData = new FormData();
           formData.set('date', this.date.value);
           formData.set('req_hour', this.task_req_hours);
@@ -148,7 +148,7 @@ export class TaskComponent implements OnInit, OnChanges {
       },
     }).onClose.subscribe(task => {
       if (task) {
-        if (this.task.hour - Number(hour) + Number(task.get('hour')) <= 24) {
+        if (Number(this.task.hour) - Number(hour) + Number(task.get('hour')) <= 24) {
           const formData = new FormData();
           formData.set('hour', task.get('hour'));
           formData.set('description', task.get('description'));

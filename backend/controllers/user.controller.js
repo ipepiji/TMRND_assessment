@@ -27,16 +27,23 @@ module.exports.getTasks = function (req, res, next) {
 }
 
 module.exports.getTaskByDate = function (req, res, next) {
-    Task.findOne({
+    User.findOne({
         where: {
-            date: req.query.date
+            username: req.user.username
         },
         include: [{
-            model: Subtask,
-            as: "subtask"
+            model: Task,
+            as: "task",
+            where: {
+                date: req.query.date
+            },
+            include: [{
+                model: Subtask,
+                as: "subtask"
+            }]
         }]
-    }).then((task) => {
-        if (!task)
+    }).then((user) => {
+        if (!user)
             return res.status(400).json({
                 status: "error",
                 message: errors.taskNotExist
@@ -44,7 +51,7 @@ module.exports.getTaskByDate = function (req, res, next) {
 
         return res.status(200).json({
             status: "success",
-            data: task
+            data: user.task[0]
         });
     }).catch((error) => {
         res.status(500);
