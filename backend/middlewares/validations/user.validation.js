@@ -38,6 +38,16 @@ module.exports.validate = (method) => {
                 break;
             }
 
+            case "leave": {
+                schema = Joi.object({
+                    date: Joi.date().required(),
+                    req_hour: Joi.number().required(),
+                })
+                req_value = req.body;
+                req_type = "body";
+                break;
+            }
+
             default: {
                 break;
             }

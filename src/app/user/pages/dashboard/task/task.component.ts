@@ -35,7 +35,7 @@ export class TaskComponent implements OnInit, OnChanges {
   form: FormGroup;
   subs: any;
   task: any;
-  task_hours: any;
+  task_hours: any = 0;
   task_req_hours: any = 8;
   subtasks: Array<Object>;
 
@@ -76,8 +76,9 @@ export class TaskComponent implements OnInit, OnChanges {
 
   loadTask() {
     this.task = null;
-    this.task_hours = null;
-    this.subtasks = [];
+    this.task_hours = 0;
+    this.task_req_hours = 8;
+    this.subtasks = new Array;
     this.title = `${this.date.day}, ${moment(this.date.value).format('DD/MM/YYYY')}`;
     this.subs = this.service.getTask(this.date.value).subscribe({
       next: (res: any) => {
@@ -85,7 +86,7 @@ export class TaskComponent implements OnInit, OnChanges {
         this.task_hours = this.task.hour;
         this.task_req_hours = this.task.req_hour;
         this.subtasks = this.task.subtask;
-        this.title += ` ${this.task_hours ? `(${this.task_hours} hours)` : ''}`;
+        this.title += this.task_req_hours === 0 ? " (ONLEAVE)" : this.task_req_hours === 4 ? ` (HALFDAY) ${this.task_hours ? `(${this.task_hours} hours)` : ''}` : ` ${this.task_hours ? `(${this.task_hours} hours)` : ''}`;
       },
       error: (err: any) => {
         if (err.status !== 400)
@@ -214,5 +215,82 @@ export class TaskComponent implements OnInit, OnChanges {
     })
   }
 
+  halfday() {
+    Swal.fire({
+      title: `Apply HALFDAY on ${moment(this.date.value).format('DD/MM/YYYY')}?`,
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes',
+      preConfirm: () => {
+        const formData = new FormData();
+        formData.set('date', this.date.value);
+        formData.set('req_hour', '4');
+        this.subs = this.service.leave(formData).subscribe({
+          next: (res: any) => {
+            return "Success";
+          },
+          error: (err: any) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something went wrong!',
+            })
+          }
+        });
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire(
+          'Applied',
+          `Halfday on ${moment(this.date.value).format('DD/MM/YYYY')}`,
+          'success'
+        );
+        this.loadTask();
+        this.commonService.notifyOther("update");
+      }
+    })
+  }
+
+  onleave() {
+    Swal.fire({
+      title: `Apply ONLEAVE on ${moment(this.date.value).format('DD/MM/YYYY')}?`,
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes',
+      preConfirm: () => {
+        const formData = new FormData();
+        formData.set('date', this.date.value);
+        formData.set('req_hour', '0');
+        this.subs = this.service.leave(formData).subscribe({
+          next: (res: any) => {
+            return "Success";
+          },
+          error: (err: any) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something went wrong!',
+            })
+          }
+        });
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire(
+          'Applied',
+          `Onleave on ${moment(this.date.value).format('DD/MM/YYYY')}`,
+          'success'
+        );
+        this.loadTask();
+        this.commonService.notifyOther("update");
+      }
+    })
+  }
 
 }

@@ -1,9 +1,19 @@
-<nb-card status="info" size="giant">
+<nb-card size="giant">
   <nb-card-header>
     <div class="d-flex justify-content-between">
-      <div class="h5 text-white">Researcher</div>
-      <div class="h5 text-center text-white">{{title}}</div>
-      <button nbButton type="submit" status="success" (click)="createSubtask()">Add Task</button>
+      <div class="h6">Researcher</div>
+      <div class="h6 text-center">{{title}}</div>
+      <div class="btn">
+        <button nbButton type="submit" status="warning" (click)="halfday()"
+          [disabled]="this.task_req_hours === 0 || this.task_req_hours === 4">Halfday</button>
+        &nbsp;
+        <button nbButton type="submit" status="success" (click)="onleave()"
+          [disabled]="this.task_req_hours === 0 || this.task_req_hours === 4">Onleave</button>
+        &nbsp;
+        <button nbButton type="submit" status="primary" (click)="createSubtask()"
+          [disabled]="this.task_req_hours === 0">Add
+          Task</button>
+      </div>
     </div>
   </nb-card-header>
   <div class="chart-container">

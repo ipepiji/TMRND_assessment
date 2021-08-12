@@ -60,4 +60,10 @@ export class UserService implements UserData {
     const url = `${this.url}/subtask/${id}`;
     return this.http.delete(url, this.requestOptions);
   }
+
+  leave(formData: FormData): Observable<Object> {
+    this.setLocalStorage();
+    const url = `${this.url}/task/leave`;
+    return this.http.put(url, formData, this.requestOptions);
+  }
 }

@@ -7,7 +7,10 @@ const controller = require('../controllers/user.controller');
 const { validations } = require('../middlewares');
 
 router.route('/task')
-    .get(controller.getTasks);
+    .get(controller.getTasks)
+
+router.route('/task/leave')
+    .put(validations.user.validate('leave'), controller.leave);
 
 router.route('/task/query')
     .get(validations.user.validate('filter_task'), controller.getTaskByDate);

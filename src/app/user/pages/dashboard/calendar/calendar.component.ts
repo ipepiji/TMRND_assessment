@@ -86,8 +86,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
           this.eventSources.push({
             id: evt.id,
             date: moment(evt.date).format('YYYY-MM-DD'),
-            title: evt.status, db: "yes",
-            backgroundColor: evt.status === "COMPLETE" ? '#0095ff' : 'red'
+            title: evt.status,
+            backgroundColor: evt.status === "COMPLETE" ? '#0095ff' : evt.status === "ONLEAVE" ? 'green' : 'red'
           });
         });
         const exclude_date = res.data.map((evt) => {

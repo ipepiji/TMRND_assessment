@@ -7,4 +7,5 @@ export abstract class UserData {
     abstract createSubtask(formData: FormData): Observable<Object>;
     abstract updateSubtask(formData: FormData, id: number): Observable<Object>;
     abstract deleteSubtask(id: number): Observable<Object>;
+    abstract leave(formData: FormData): Observable<Object>;
 }

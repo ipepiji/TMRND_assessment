@@ -202,7 +202,6 @@ module.exports.updateSubtask = function (req, res, next) {
                 }]
             }],
         }).then((user) => {
-            console.log(user.task[0].dataValues.total_hours,);
             const updated_task = {
                 hour: user.task[0].dataValues.total_hours,
                 status: user.task[0].dataValues.total_hours.toFixed(2) >= req_hour ? "COMPLETE" : "PENDING",
@@ -271,6 +270,64 @@ module.exports.deleteSubtask = function (req, res, next) {
             res.status(500);
             return next(error);
         });
+    }).catch((error) => {
+        res.status(500);
+        return next(error);
+    });
+}
+
+module.exports.leave = function (req, res, next) {
+    User.findOne({
+        where: {
+            id: req.user.id
+        },
+        include: [{
+            model: Task,
+            as: "task",
+            where: {
+                date: req.body.date
+            }
+        }]
+    }).then((user) => {
+        if (!user) {
+            Task.create({
+                user_id: req.user.id,
+                date: req.body.date,
+                hour: 0,
+                req_hour: req.body.req_hour,
+                status: req.body.req_hour === 0 ? "ONLEAVE" : "PENDING"
+            }).then((task) => {
+                return res.status(201).json({
+                    status: "success",
+                    data: {
+                        req_hour: req.body.req_hour
+                    }
+                });
+            }).catch((error) => {
+                res.status(500);
+                return next(error);
+            });
+        } else {
+            Task.update({
+                req_hour: req.body.req_hour,
+                status: req.body.req_hour === 0 ? "ONLEAVE" : user.task[0].hour >= req.body.req_hour ? "COMPLETE" : "PENDING"
+            }, {
+                where: {
+                    id: user.task[0].id
+                }
+            }).then((task) => {
+                return res.status(201).json({
+                    status: "success",
+                    data: {
+                        req_hour: req.body.req_hour
+                    }
+                });
+            }).catch((error) => {
+                res.status(500);
+                return next(error);
+            });
+
+        }
     }).catch((error) => {
         res.status(500);
         return next(error);
