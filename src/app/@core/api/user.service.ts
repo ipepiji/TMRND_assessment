@@ -27,12 +27,12 @@ export class UserService implements UserData {
     return this.http.get(url, this.requestOptions);
   }
 
-  getTask(id: string): Observable<Object> {
-    const url = `${this.url}/task/${id}`;
+  getTask(date: any): Observable<Object> {
+    const url = `${this.url}/task/query?date=${date}`;
     return this.http.get(url, this.requestOptions);
   }
 
-  getSubtask(id: string): Observable<Object> {
+  getSubtask(id: number): Observable<Object> {
     const url = `${this.url}/subtask/${id}`;
     return this.http.get(url, this.requestOptions);
   }
@@ -42,12 +42,12 @@ export class UserService implements UserData {
     return this.http.post(url, formData, this.requestOptions);
   }
 
-  updateSubtask(formData: FormData, id: string): Observable<Object> {
+  updateSubtask(formData: FormData, id: number): Observable<Object> {
     const url = `${this.url}/subtask/${id}`;
     return this.http.put(url, formData, this.requestOptions);
   }
 
-  deleteSubtask(id: string): Observable<Object> {
+  deleteSubtask(id: number): Observable<Object> {
     const url = `${this.url}/subtask/${id}`;
     return this.http.delete(url, this.requestOptions);
   }

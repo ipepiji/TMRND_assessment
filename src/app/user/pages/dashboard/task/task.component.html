@@ -3,12 +3,27 @@
     <div class="d-flex justify-content-between">
       <div class="h5 text-white">Researcher</div>
       <div class="h5 text-center text-white">{{title}}</div>
-      <button nbButton type="submit" status="success">Add Task</button>
+      <button nbButton type="submit" status="success" (click)="createSubtask()">Add Task</button>
     </div>
   </nb-card-header>
   <div class="chart-container">
     <nb-card-body>
-      HEHE
+      <ul>
+        <li *ngFor="let subtask of subtasks">
+          {{subtask.description}}
+          <span class="hours">{{subtask.hour}} hours</span>
+          <span class="icon-btn">
+            <button nbButton type="submit" status="success"
+              (click)="updateSubtask(subtask.id, subtask.hour, subtask.description)">
+              <nb-icon icon="edit-2-outline"></nb-icon>
+            </button>
+            &nbsp;
+            <button nbButton type="submit" status="danger" (click)="deleteSubtask(subtask.id)">
+              <nb-icon icon="trash-2-outline"></nb-icon>
+            </button>
+          </span>
+        </li>
+      </ul>
     </nb-card-body>
   </div>
 </nb-card>

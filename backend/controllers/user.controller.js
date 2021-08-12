@@ -111,10 +111,11 @@ module.exports.createSubtask = function (req, res, next) {
             });
         } else {
             const { hour } = user.task[0];
+            console.log(hour + req.body.hour);
             const updated_task = {
                 req_hour: req.body.req_hour,
                 hour: hour + req.body.hour,
-                status: (hour + req.body.hour) >= req.body.req_hour ? "COMPLETE" : "PENDING",
+                status: (hour + req.body.hour).toFixed(2) >= req.body.req_hour ? "COMPLETE" : "PENDING",
             };
 
             Promise.all([
@@ -194,7 +195,7 @@ module.exports.updateSubtask = function (req, res, next) {
         }).then((user) => {
             const updated_task = {
                 hour: user[0].task[0].dataValues.total_hours,
-                status: user[0].task[0].dataValues.total_hours >= req_hour ? "COMPLETE" : "PENDING",
+                status: user[0].task[0].dataValues.total_hours.toFixed(2) >= req_hour ? "COMPLETE" : "PENDING",
             };
             Task.update(updated_task, {
                 where: {
@@ -220,20 +221,45 @@ module.exports.updateSubtask = function (req, res, next) {
 }
 
 module.exports.deleteSubtask = function (req, res, next) {
-    Subtask.destroy({
-        where: {
-            id: req.params.id
-        }
-    }).then((subtask) => {
-        if (!subtask)
+    Task.findOne({
+        include: [{
+            model: Subtask,
+            as: "subtask",
+            where: {
+                id: req.params.id
+            },
+        }]
+    }).then((task) => {
+        if (!task)
             return res.status(400).json({
                 status: "error",
                 message: errors.subtaskNotExist
             });
 
-        return res.status(200).json({
-            status: "success",
-            message: "deleted"
+        const updatedTask = {
+            hour: task.hour - task.subtask[0].hour,
+            status: (task.hour - task.subtask[0].hour).toFixed(2) >= task.req_hour ? "COMPLETE" : "PENDING"
+        };
+
+        Promise.all([
+            Task.update(updatedTask, {
+                where: {
+                    id: task.id
+                },
+            }),
+            Subtask.destroy({
+                where: {
+                    id: req.params.id
+                }
+            })
+        ]).then(([updated_task, subtask]) => {
+            return res.status(200).json({
+                status: "success",
+                message: "deleted"
+            });
+        }).catch((error) => {
+            res.status(500);
+            return next(error);
         });
     }).catch((error) => {
         res.status(500);

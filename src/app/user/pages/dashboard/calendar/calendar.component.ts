@@ -1,10 +1,13 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FullCalendarComponent, CalendarOptions, EventApi } from '@fullcalendar/angular';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import * as moment from 'moment';
 
 import { UserData } from '../../../../@core/data/user';
+import { CommonService } from '../../../../@core/utils/common.service';
 
-export interface SelectedDate {
+interface SelectedDate {
   value: string;
   day: string
 }
@@ -24,10 +27,15 @@ export class CalendarComponent implements OnInit, OnDestroy {
   currentEvents: EventApi[] = [];
   calendarOptions: CalendarOptions;
 
-  constructor(private service: UserData) { }
+  constructor(private userService: UserData,
+    private commonService: CommonService) { }
 
   ngOnInit(): void {
     this.loadEvents();
+    this.subs = this.commonService.notifyObservable$.subscribe((res) => {
+      if (res === "update")
+        this.updateEvent();
+    })
   }
 
   ngOnDestroy() {
@@ -36,16 +44,29 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   loadEvents(): void {
-    this.subs = this.service.getTasks().subscribe({
-      next: (res: any) => {
-        this.eventSources = res.data.map(evt => {
-          return { id: evt.id, date: moment(evt.date).format('YYYY-MM-DD'), title: evt.status, db: "yes" }
+    this.subs = this.userService.getTasks().pipe(
+      switchMap((res: any) => {
+        res.data.forEach(evt => {
+          this.eventSources.push({
+            id: evt.id,
+            date: moment(evt.date).format('YYYY-MM-DD'),
+            title: evt.status, db: "yes",
+            backgroundColor: evt.status === "COMPLETE" ? '#0095ff' : 'red'
+          });
         });
+        const exclude_date = res.data.map((evt) => {
+          return moment(evt.date).format('YYYY-MM-DD');
+        })
+        return of(exclude_date);
+      })
+    ).subscribe({
+      next: (exclude_date: string) => {
         this.eventSources.push({
           color: 'yellow',
           borderColor: 'sea blue',
           overLap: false,
           allDay: true,
+          exdate: exclude_date,
           rrule: {
             freq: 'monthly',
             byweekday: [5, 6],
@@ -57,6 +78,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
             title: "PENDING",
             overLap: false,
             allDay: true,
+            exdate: exclude_date,
             rrule: {
               freq: 'monthly',
               byweekday: [0, 1, 2, 3, 4],
@@ -88,7 +110,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
             if (args.event._def.title === "COMPLETE") {
               const icon = "&nbsp;<i class='fa fa-thumbs-up'></i>";
               return {
-                html: icon,
+                html: icon
               };
             }
 
@@ -99,8 +121,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
               };
             }
           },
-          // eventDidMount: function (a) {
-          // },
           eventClick: this.handleEventClick.bind(this),
           eventsSet: this.handleEvents.bind(this),
         };
@@ -114,7 +134,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   handleEventClick(info): void {
     info.jsEvent.preventDefault();
     const selectedDate: SelectedDate = {
-      value: moment(info.event._instance.range.start).format('DD/MM/YYYY'),
+      value: moment(info.event._instance.range.start).format('YYYY-MM-DD'),
       day: moment(info.event._instance.range.start).format('dddd')
     };
     this.dateEvent.emit(selectedDate);
@@ -128,9 +148,16 @@ export class CalendarComponent implements OnInit, OnDestroy {
     let calendarApi = this.calendarComponent.getApi();
     calendarApi.today();
     const selectedDate: SelectedDate = {
-      value: moment().format('DD/MM/YYYY'),
+      value: moment().format('YYYY-MM-DD'),
       day: moment().format('dddd')
     };
     this.dateEvent.emit(selectedDate);
+  }
+
+  updateEvent() {
+    this.eventSources = [];
+    this.loadEvents();
+    let calendarApi = this.calendarComponent.getApi();
+    calendarApi.render()
   }
 }

@@ -1,0 +1,57 @@
+<nb-card>
+  <nb-card-header>{{title}}</nb-card-header>
+  <nb-card-body>
+    <div class="container">
+      <form (ngSubmit)="submit()" [formGroup]="form" aria-labelledby="title">
+
+        <div class="row">
+
+          <div class="col-md-6">
+            <div class="form-control-group">
+              <nb-select fullWidth [formControl]="form.controls['hour']" placeholder="Hour" size="large">
+                <nb-option [value]="hour" *ngFor="let hour of hours">{{hour}} hours
+                </nb-option>
+              </nb-select>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-control-group">
+              <nb-select fullWidth [formControl]="form.controls['minute']" placeholder="Minute" size="large">
+                <nb-option [value]="minute" *ngFor="let minute of minutes">{{minute}} minutes
+                </nb-option>
+              </nb-select>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-control-group">
+              <textarea nbInput fullWidth [formControl]="form.controls['description']" placeholder="Description"
+                fieldSize="large"
+                [status]="form.controls['description'].dirty ? (form.controls['description'].invalid  ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="form.controls['description'].invalid && form.controls['description'].touched ? true : null"
+                autocomplete="on" cols="40" rows="10" required>
+              </textarea>
+              <ng-container *ngIf="form.controls['description'].invalid && form.controls['description'].touched">
+                <p class="caption status-danger" *ngIf="form.controls['description'].hasError('required')">
+                  Description is required!
+                </p>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <button nbButton fullWidth status="success" size="large"
+          [disabled]="submitted || form.invalid || form.pristine || !(form.controls['hour'].value || form.controls['minute'].value)"
+          [class.btn-pulse]="submitted">
+          <span *ngIf="type === 'add'">Add Task</span>
+          <span *ngIf="type === 'update'">Update Task</span>
+        </button>
+
+      </form>
+    </div>
+  </nb-card-body>
+</nb-card>

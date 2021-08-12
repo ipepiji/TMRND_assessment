@@ -6,16 +6,15 @@ $legend-canceled-color: #3f4fda;
 
 @include nb-install-component() {
   --card-height-giant: 43.25rem;
-  
-  .chart-container {
-    flex: 1;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+
+  .hours {
+    margin-left: 10px;
+    background-color: #0095ff;
+    color: white;
+    border-radius: 10%;
   }
 
-  ngx-user-dashboard-bar-chart {
-    padding: 0 1.25rem;
+  .icon-btn{
+    margin-left: 10px;
   }
 }

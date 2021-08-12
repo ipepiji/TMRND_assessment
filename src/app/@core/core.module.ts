@@ -8,6 +8,7 @@ import {
   LayoutService,
   SeoService,
   StateService,
+  CommonService,
 } from './utils';
 
 import { AuthData } from './data/auth';
@@ -31,6 +32,7 @@ export const NB_CORE_PROVIDERS = [
   LayoutService,
   SeoService,
   StateService,
+  CommonService,
 ];
 
 @NgModule({

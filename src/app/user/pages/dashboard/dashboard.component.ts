@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import * as moment from 'moment';
 
-export interface SelectedDate {
+interface SelectedDate {
   value: string;
   day: string
 }
@@ -14,7 +14,7 @@ export interface SelectedDate {
 export class DashboardComponent {
 
   selectedDate: SelectedDate = {
-    value: moment().format('DD/MM/YYYY'),
+    value: moment().format('YYYY-MM-DD'),
     day: moment().format('dddd')
   };;
 

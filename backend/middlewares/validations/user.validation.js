@@ -21,7 +21,7 @@ module.exports.validate = (method) => {
                     date: Joi.date().required(),
                     req_hour: Joi.number().required(),
                     hour: Joi.number().required(),
-                    description: Joi.string().min(4).max(50).required(),
+                    description: Joi.string().min(1).max(50).required(),
                 })
                 req_value = req.body;
                 req_type = "body";
@@ -31,7 +31,7 @@ module.exports.validate = (method) => {
             case "update_subtask": {
                 schema = Joi.object({
                     hour: Joi.number().required(),
-                    description: Joi.string().min(4).max(50).required(),
+                    description: Joi.string().min(1).max(50).required(),
                 })
                 req_value = req.body;
                 req_type = "body";
