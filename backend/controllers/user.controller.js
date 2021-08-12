@@ -183,7 +183,7 @@ module.exports.updateSubtask = function (req, res, next) {
             });
 
         const { id, req_hour } = user.task[0];
-        User.findAll({
+        User.findOne({
             where: {
                 id: req.user.id
             },
@@ -192,6 +192,9 @@ module.exports.updateSubtask = function (req, res, next) {
                 model: Task,
                 as: "task",
                 attributes: [[Sequelize.fn('sum', Sequelize.col('task.subtask.hour')), 'total_hours']],
+                where: {
+                    id: user.task[0].id
+                },
                 include: [{
                     model: Subtask,
                     as: "subtask",
@@ -199,9 +202,10 @@ module.exports.updateSubtask = function (req, res, next) {
                 }]
             }],
         }).then((user) => {
+            console.log(user.task[0].dataValues.total_hours,);
             const updated_task = {
-                hour: user[0].task[0].dataValues.total_hours,
-                status: user[0].task[0].dataValues.total_hours.toFixed(2) >= req_hour ? "COMPLETE" : "PENDING",
+                hour: user.task[0].dataValues.total_hours,
+                status: user.task[0].dataValues.total_hours.toFixed(2) >= req_hour ? "COMPLETE" : "PENDING",
             };
             Task.update(updated_task, {
                 where: {
