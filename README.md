@@ -1,12 +1,14 @@
 How to run:
 1. Ensure window can run Makefile command
     - Install 'CHOCOLATEY': https://chocolatey.org/install
-    - Install 'MAKE': Run CMD as administrator and execute => choco install make
+    - Install 'MAKE': Run CMD as administrator and execute command "choco install make"
 2. Install Docker Desktop together with docker-compose: https://docs.docker.com/docker-for-windows/install/
 3. Clone repository: https://github.com/ipepiji/TMRND_assessment.git
 4. Go to the project directory and execute command "make init"
 5. Wait dockerize process done.
 6. Open http://localhost:4200
+
+Psst: If there's problem with command "make init", you can just excute command "docker-compose up -d"
 
 Features:
 1. Login
